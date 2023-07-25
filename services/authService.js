@@ -1,5 +1,6 @@
 const { User } = require("../models/user");
 const jwt = require("jsonwebtoken");
+const gravatar = require("gravatar");
 
 const findUserByEmail = async ({ email }) => {
   const user = await User.findOne({ email });
@@ -7,7 +8,8 @@ const findUserByEmail = async ({ email }) => {
 };
 
 const registerNewUser = async ({ email, password }) => {
-  const newUser = await new User({ email, password });
+  const avatarURL = gravatar.url(email);
+  const newUser = await new User({ email, password, avatarURL });
   newUser.setPassword(password);
   newUser.save();
 
@@ -49,6 +51,12 @@ const updateSubscription = async (_id, subscription) => {
   return updatedUser;
 };
 
+const updateUserAvatar = async (_id, avatarURL) => {
+  const updatedAvatar = await User.findByIdAndUpdate(_id, { avatarURL });
+
+  return updatedAvatar;
+};
+
 module.exports = {
   findUserByEmail,
   registerNewUser,
@@ -56,4 +64,5 @@ module.exports = {
   logoutUser,
   loginUser,
   updateSubscription,
+  updateUserAvatar,
 };
